@@ -20,7 +20,7 @@ module RBHive
   
     def column_names
       @column_names ||= begin
-        schema_names = @schema.fieldSchemas.map {|c| c.name }
+        schema_names = @schema.fieldSchemas ? @schema.fieldSchemas.map {|c| c.name } : []
         
         # In rare cases Hive can return two identical column names
         # consider SELECT a.foo, b.foo...
@@ -45,7 +45,7 @@ module RBHive
   
     def column_type_map
       @column_type_map ||= column_names.inject({}) do |hsh, c| 
-        definition = @schema.fieldSchemas.find {|s| s.name.to_sym == c }
+        definition = @schema.fieldSchemas ? @schema.fieldSchemas.find {|s| s.name.to_sym == c } : nil
         # If the column isn't in the schema (eg partitions in SELECT * queries) assume they are strings
         hsh[c] = definition ? definition.type.to_sym : :string
         hsh
