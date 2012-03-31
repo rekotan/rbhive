@@ -6,8 +6,8 @@ require File.join(File.dirname(__FILE__), *%w[.. thrift thrift_hive])
 $VERBOSE = old_verbose
 
 module RBHive
-  def connect(server, port=10_000)
-    connection = RBHive::Connection.new(server, port)
+  def connect(server, port=10_000, logger=StdOutLogger.new)
+    connection = RBHive::Connection.new(server, port, logger)
     ret = nil
     begin
       connection.open
@@ -30,7 +30,7 @@ module RBHive
   class Connection
     attr_reader :client
     
-    def initialize(server, port=10_000, logger=StdOutLogger.new)
+    def initialize(server, port, logger)
       @socket = Thrift::Socket.new(server, port)
       @transport = Thrift::BufferedTransport.new(@socket)
       @protocol = Thrift::BinaryProtocol.new(@transport)
